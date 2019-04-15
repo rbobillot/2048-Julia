@@ -26,6 +26,11 @@ merge_u(board) = invert(merge_r(invert(board)))
 
 merge_d(board) = invert(merge_l(invert(board)))
 
+
+displaygrid(board) =
+    [println(join([join(x, " ") for x in ys], "    ")) for ys in board]
+
+
 function main(args)
 
     xs = splitdims([
@@ -34,10 +39,13 @@ function main(args)
     2 0 2 0;
     0 2 0 2], 1)
 
-    println(merge_r(xs))
-    println(merge_l(xs))
-    println(merge_u(xs))
-    println(merge_d(xs))
+    displaygrid(
+        invert(
+            hcat([xs,
+                merge_r(xs),
+                merge_l(xs),
+                merge_u(xs),
+                merge_d(xs)])))
 
 end
 
