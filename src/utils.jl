@@ -1,3 +1,5 @@
+randint(n) = Int(rand(UInt8) % n + 1)
+
 dropzeros(row::Array{Int})::Array{Int} =
     filter(!iszero, row)
 

@@ -3,7 +3,20 @@ include("utils.jl")
 using Match
 using SplitApplyCombine
 
+Board = Array{Array{Int64,1},1}
+
 cleanrow(row) = row |> dropzeros |> lpadrow
+
+isplayable(board) =
+    isnothing(board) ? false :
+        board |> merge_r |> merge_l |> merge_d |> merge_u |>
+            nextboard -> all(!iszero, nextboard) ≠ board
+
+getidentifier(str) =
+    isempty(str) ? ' ' : str[1] |> lowercase
+
+isdirection(direction) =
+    direction |> getidentifier |> i -> i ∈ ['r', 'l', 'd', 'u']
 
 merge_row(row) = cleanrow(@match cleanrow(row) begin
     [a,b,c,d], if a ≠ b ≠ c ≡ d end => [a,b,c+d] # [a,b,c,c]
@@ -24,20 +37,24 @@ merge_d(board) = invert(merge_r(invert(board)))
 
 merge_u(board) = invert(merge_l(invert(board)))
 
-isplayable(board) =
-    isnothing(board) ? false :
-        board |> merge_r |> merge_l |> merge_d |> merge_u |>
-            nextboard -> all(!iszero, nextboard) ≠ board
-
-getidentifier(str) =
-    isempty(str) ? ' ' : str[1] |> lowercase
-
-isdirection(direction) =
-    direction |> getidentifier |> i -> i ∈ ['r', 'l', 'd', 'u']
-
 mergeboard(direction, board) =
     "merge_$(direction |> getidentifier)($board)" |> evalfunctioncall
 
-function merge(direction, board)
-    isdirection(direction) ? mergeboard(direction, board) : board
+function addtile(board)
+    if all(!iszero, board)
+        board
+    else
+        n = length(board)
+        x = randint(n)
+        y = randint(n)
+        nextboard = board
+        iszero(board[x][y]) ? nextboard[x][y] = 2 : addtile(board)
+        sleep(0.7)
+        nextboard
+    end
+end
+
+function merge(direction::String, board::Board)::Board
+    merged = isdirection(direction) ? mergeboard(direction, board) : board
+    merged ≠ board ? nextboard = addtile(merged) : board
 end

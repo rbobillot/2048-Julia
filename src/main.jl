@@ -14,6 +14,8 @@ function main(args)
     [0,0,0,0]]
 
     mainboard = splitdims(zeros(Int, 4,4), 1)
+    addtile(mainboard)
+    addtile(mainboard)
 
     term_play(xs)
 
