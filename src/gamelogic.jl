@@ -25,8 +25,19 @@ merge_d(board) = invert(merge_r(invert(board)))
 merge_u(board) = invert(merge_l(invert(board)))
 
 isplayable(board) =
-    board ≠ (board |> merge_r |> merge_l |> merge_d |> merge_u)
+    isnothing(board) ? false :
+        board |> merge_r |> merge_l |> merge_d |> merge_u |>
+            nextboard -> all(!iszero, nextboard) ≠ board
 
-function merge(direction, board) =
-    "merge_$(direction)(board)" |> evalfunctioncall |>
-        nextboard -> isplayable(nextboard) ? nextboard : nothing
+getidentifier(str) =
+    isempty(str) ? ' ' : str[1] |> lowercase
+
+isdirection(direction) =
+    direction |> getidentifier |> i -> i ∈ ['r', 'l', 'd', 'u']
+
+mergeboard(direction, board) =
+    "merge_$(direction |> getidentifier)($board)" |> evalfunctioncall
+
+function merge(direction, board)
+    isdirection(direction) ? mergeboard(direction, board) : board
+end
