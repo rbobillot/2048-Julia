@@ -47,14 +47,13 @@ function addtile(board)
         n = length(board)
         x = randint(n)
         y = randint(n)
-        nextboard = board
-        iszero(board[x][y]) ? nextboard[x][y] = 2 : addtile(board)
+        iszero(board[x][y]) ? board[x][y] = 2 : addtile(board)
         sleep(0.7)
-        nextboard
+        board
     end
 end
 
 function merge(direction::String, board::Board)::Board
     merged = isdirection(direction) ? mergeboard(direction, board) : board
-    merged ≠ board ? nextboard = addtile(merged) : board
+    merged ≠ board ? addtile(merged) : board
 end
